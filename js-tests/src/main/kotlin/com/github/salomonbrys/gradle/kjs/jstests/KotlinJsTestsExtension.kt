@@ -1,6 +1,6 @@
 package com.github.salomonbrys.gradle.kjs.jstests
 
-class KotlinJsTestExtension {
+class KotlinJsTestsExtension {
 
     data class Engine(val npmModules: List<String>, val executable: String, val firstArguments: List<String> = emptyList())
 

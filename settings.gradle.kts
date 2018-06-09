@@ -1,5 +1,6 @@
 include(
         ":all-sources-jar",
         ":js-tests",
-        ":assemble-web"
+        ":assemble-web",
+        ":konan-tests"
 )

@@ -25,7 +25,7 @@ class JsTestsPlugin : Plugin<Project> {
             plugin("de.solugo.gradle.nodejs")
         }
 
-        val extension = KotlinJsTestExtension()
+        val extension = KotlinJsTestsExtension()
         extensions.add("jsTests", extension)
 
         val compileKotlin2Js = tasks["compileKotlin2Js"] as Kotlin2JsCompile
