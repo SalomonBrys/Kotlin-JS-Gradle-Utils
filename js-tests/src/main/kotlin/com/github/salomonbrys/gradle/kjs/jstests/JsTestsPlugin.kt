@@ -1,9 +1,12 @@
 package com.github.salomonbrys.gradle.kjs.jstests
 
-import de.solugo.gradle.nodejs.NodeJsExtension
-import de.solugo.gradle.nodejs.NodeJsTask
+import com.moowork.gradle.node.NodeExtension
+import com.moowork.gradle.node.npm.NpmTask
+import com.moowork.gradle.node.task.NodeTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.repositories.ArtifactRepository
+import org.gradle.api.artifacts.repositories.IvyArtifactRepository
 import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.SourceSetContainer
@@ -22,7 +25,7 @@ class JsTestsPlugin : Plugin<Project> {
 
     private fun Project.applyPlugin() {
         apply {
-            plugin("de.solugo.gradle.nodejs")
+            plugin("com.moowork.node")
         }
 
         val extension = KotlinJsTestsExtension()
@@ -38,6 +41,15 @@ class JsTestsPlugin : Plugin<Project> {
             into("$buildDir/node_modules")
         }
 
+        extensions.configure<NodeExtension>("node") {
+            version = "10.1.0"
+            download = true
+        }
+
+        repositories.whenObjectAdded {
+            (this as? IvyArtifactRepository)?.metadataSources { artifact() }
+        }
+
         afterEvaluate {
             populateNodeModules.apply {
                 from(compileKotlin2Js.destinationDir)
@@ -46,20 +58,21 @@ class JsTestsPlugin : Plugin<Project> {
                     from(zipTree(it.absolutePath).matching { include("*.js") })
                 }
             }
-        }
 
-        extensions.configure<NodeJsExtension>("nodejs") {
-            version = "10.1.0"
-        }
+            val engineName = extension.engine.npmModules.first().capitalize()
 
-        val runJSTests = task<NodeJsTask<*>>("runJSTests") {
-            dependsOn(compileTestKotlin2Js, populateNodeModules)
-            setRequire(extension.engine.npmModules)
-            setExecutable(extension.engine.executable)
-            setArgs(extension.engine.firstArguments + listOf(projectDir.toPath().relativize(file(compileTestKotlin2Js.outputFile).toPath())))
-        }
+            val installJSTestRunner = task<NpmTask>("install$engineName") {
+                group = "verification"
+                setArgs(listOf("install") + extension.engine.npmModules)
+            }
 
-        afterEvaluate {
+            val runJSTests = task<NodeTask>("run$engineName") {
+                dependsOn(compileTestKotlin2Js, populateNodeModules, installJSTestRunner)
+                group = "verification"
+                setScript(file(extension.engine.executable))
+                setArgs(extension.engine.firstArguments + listOf(projectDir.toPath().relativize(file(compileTestKotlin2Js.outputFile).toPath())))
+            }
+
             if (sourceSets["test"].allSource.isEmpty) {
                 val expectedBy = configurations.firstOrNull { it.name == "expectedBy" } ?: run {
                     logger.info("${project.path}: Project has neither test sources nor expectedBy dependency: skipping tests.")

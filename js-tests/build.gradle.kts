@@ -12,7 +12,7 @@ dependencies {
     gradleKotlinDsl()
     compile(kotlin("stdlib", kotlinVer))
     compile("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVer")
-    compile("gradle.plugin.de.solugo.gradle:gradle-nodejs-plugin:0.2.1")
+    compile("com.moowork.gradle:gradle-node-plugin:1.2.0")
 }
 
 mavenPublish()
