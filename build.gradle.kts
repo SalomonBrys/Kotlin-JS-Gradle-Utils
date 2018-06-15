@@ -1,14 +1,14 @@
 
-extra["kotlinVer"] = "1.2.31"
+extra["kotlinVer"] = "1.2.41"
 extra["konanVer"] = "0.6.2"
 
 plugins {
-    kotlin("jvm") version "1.2.31" apply false
+    kotlin("jvm") version "1.2.41" apply false
 }
 
 allprojects {
     group = "com.github.salomonbrys.gradle"
-    version = "1.0.2"
+    version = "1.0.3"
 }
 
 subprojects {

@@ -1,18 +1,17 @@
 plugins {
     kotlin("jvm")
+    `java-library`
     `kotlin-dsl`
-    id("com.jfrog.bintray")
-    `maven-publish`
 }
 
 val kotlinVer: String by rootProject.extra
 
 dependencies {
-    compile(gradleApi())
-    gradleKotlinDsl()
-    compile(kotlin("stdlib", kotlinVer))
-    compile("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVer")
-    compile("com.moowork.gradle:gradle-node-plugin:1.2.0")
+    implementation(gradleApi())
+    implementation(gradleKotlinDsl())
+    implementation(kotlin("stdlib", kotlinVer))
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVer")
+    implementation("com.moowork.gradle:gradle-node-plugin:1.2.0")
 }
 
 mavenPublish()
