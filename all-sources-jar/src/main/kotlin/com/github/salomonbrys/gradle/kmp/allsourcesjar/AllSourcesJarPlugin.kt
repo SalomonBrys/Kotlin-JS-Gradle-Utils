@@ -23,7 +23,7 @@ class AllSourcesJarPlugin : Plugin<Project> {
     private fun Project.applyPlugin() {
         val sourcesJar = task<Jar>("sourcesJar") {
             classifier = "sources"
-            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+            setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
         }
 
         afterEvaluate {

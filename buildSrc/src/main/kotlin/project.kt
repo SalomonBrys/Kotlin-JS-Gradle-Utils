@@ -17,7 +17,7 @@ fun Project.mavenPublish() {
 
     val sourcesJar = task<Jar>("sourcesJar") {
         classifier = "sources"
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     }
 
     afterEvaluate {
@@ -25,8 +25,8 @@ fun Project.mavenPublish() {
     }
 
     extensions.configure<PublishingExtension>("publishing") {
-        (publications) {
-            "KMP"(MavenPublication::class) {
+        publications {
+            register("KMP", MavenPublication::class.java) {
                 from(components["java"])
                 artifact(sourcesJar)
             }
