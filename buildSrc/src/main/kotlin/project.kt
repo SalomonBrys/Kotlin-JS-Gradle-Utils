@@ -25,8 +25,8 @@ fun Project.mavenPublish() {
     }
 
     extensions.configure<PublishingExtension>("publishing") {
-        publications {
-            register("KMP", MavenPublication::class.java) {
+        (publications) {
+            "KMP"(MavenPublication::class) {
                 from(components["java"])
                 artifact(sourcesJar)
             }

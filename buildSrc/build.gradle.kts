@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.2.60"
+    kotlin("jvm") version "1.2.31"
     `kotlin-dsl`
 }
 
@@ -8,8 +8,8 @@ repositories {
 }
 
 dependencies {
-    compile(gradleApi())
-    gradleKotlinDsl()
-    compile(kotlin("stdlib", "1.2.60"))
-    compile("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4")
+    implementation(gradleApi())
+    implementation(gradleKotlinDsl())
+    implementation(kotlin("stdlib", "1.2.31"))
+    implementation("com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0")
 }
