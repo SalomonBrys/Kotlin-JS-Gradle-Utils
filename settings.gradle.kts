@@ -1,5 +1,7 @@
+
+rootProject.name = "KotlinJS-Gradle-Utils"
+
 include(
-        ":all-sources-jar",
         ":js-tests",
         ":assemble-web"
 )
