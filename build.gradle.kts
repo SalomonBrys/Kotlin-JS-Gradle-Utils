@@ -17,7 +17,7 @@ repositories {
     maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
 }
 
-val kotlinVersion = "1.3.0-rc-146"
+val kotlinVersion = "1.3.0"
 
 dependencies {
     implementation(gradleApi())
