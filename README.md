@@ -94,7 +94,7 @@ kotlin {
 }
 ```
 
-##### Kotlin Groovy DSL
+##### Gradle Kotlin DSL
 
 ```kotlin
 kotlin {
