@@ -7,7 +7,7 @@ plugins {
     id("com.jfrog.bintray") version "1.8.0"
 }
 
-group = "com.github.salomonbrys.gradle.kjs"
+group = "com.github.salomonbrys.gradle.kotlin.js"
 version = "1.0.0"
 
 repositories {
@@ -38,7 +38,7 @@ afterEvaluate {
 
 publishing {
     (publications) {
-        "KJS"(MavenPublication::class) {
+        "Maven"(MavenPublication::class) {
             from(components["java"])
             artifact(sourcesJar)
         }
@@ -54,14 +54,14 @@ if (hasProperty("bintrayUsername") && hasProperty("bintrayApiKey")) {
         key = bintrayApiKey
 
         pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
-            repo = "KJS-Gradle-Utils"
+            repo = "gradle-plugins"
             name = project.name
             setLicenses("MIT")
-            websiteUrl = "https://github.com/SalomonBrys/KMP-Gradle-Utils"
-            issueTrackerUrl = "https://github.com/SalomonBrys/KMP-Gradle-Utils/issues"
-            vcsUrl = "https://github.com/SalomonBrys/KMP-Gradle-Utils.git"
+            websiteUrl = "https://github.com/SalomonBrys/Kotlin-JS-Gradle-Utils"
+            issueTrackerUrl = "https://github.com/SalomonBrys/Kotlin-JS-Gradle-Utils/issues"
+            vcsUrl = "https://github.com/SalomonBrys/Kotlin-JS-Gradle-Utils.git"
 
-            setPublications("KJS")
+            setPublications("Maven")
         })
 
     }
