@@ -52,7 +52,7 @@ abstract class KotlinJsTestsNodePlugin<E: KotlinJsTestsNodeExtension> : KtPlugin
 
         target.testCompileTask.kotlinOptions.moduleKind = "commonjs"
 
-        val testDir = "${project.buildDir}/test-js/${target.name}"
+        val testDir = target.outputDir
 
         val copyModules = project.task<Copy>("${target.name}TestCopyModules") {
             group = "build"

@@ -9,4 +9,6 @@ open class KotlinJsTestsNodeTarget(private val name: String, val mainCompileTask
 
     var engine: Engine = Engine.default
 
+    var outputDir: String = "${testCompileTask.project.buildDir}/test-js/$name"
+
 }
