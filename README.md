@@ -22,7 +22,7 @@ buildscript {
         maven { url "https://dl.bintray.com/salomonbrys/gradle-plugins" }
     }
     dependencies {
-        classpath "com.github.salomonbrys.gradle.kotlin.js:kotlin-js-gradle-utils:1.0.0"
+        classpath "com.github.salomonbrys.gradle.kotlin.js:kotlin-js-gradle-utils:1.1.0"
     }
 }
 ```
@@ -43,7 +43,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id.startsWith("com.github.salomonbrys.gradle.kotlin.js.")) {
-                useModule("com.github.salomonbrys.gradle.kotlin.js:kotlin-js-gradle-utils:1.0.0")
+                useModule("com.github.salomonbrys.gradle.kotlin.js:kotlin-js-gradle-utils:1.1.0")
             }
         }
     }

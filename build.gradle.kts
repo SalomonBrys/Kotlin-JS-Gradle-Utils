@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.github.salomonbrys.gradle.kotlin.js"
-version = "1.0.0"
+version = "1.1.0"
 
 repositories {
     jcenter()
@@ -17,7 +17,7 @@ repositories {
     maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
 }
 
-val kotlinVersion = "1.3.0"
+val kotlinVersion = "1.3.20"
 
 dependencies {
     implementation(gradleApi())
@@ -33,12 +33,12 @@ val sourcesJar = task<Jar>("sourcesJar") {
 }
 
 afterEvaluate {
-    sourcesJar.from(java.sourceSets["main"].allSource)
+    sourcesJar.from(sourceSets["main"].allSource)
 }
 
 publishing {
-    (publications) {
-        "Maven"(MavenPublication::class) {
+    publications {
+        create<MavenPublication>("Maven") {
             from(components["java"])
             artifact(sourcesJar)
         }

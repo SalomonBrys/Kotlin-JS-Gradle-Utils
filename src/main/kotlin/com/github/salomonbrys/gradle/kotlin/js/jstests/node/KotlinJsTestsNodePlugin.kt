@@ -8,10 +8,9 @@ import com.moowork.gradle.node.task.NodeTask
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
-import org.gradle.api.internal.AbstractTask
 import org.gradle.api.tasks.Copy
-import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.task
+import kotlin.properties.Delegates
 import kotlin.reflect.KClass
 
 abstract class KotlinJsTestsNodePlugin<E: KotlinJsTestsNodeExtension> : KtPlugin<Project> {
@@ -54,12 +53,27 @@ abstract class KotlinJsTestsNodePlugin<E: KotlinJsTestsNodeExtension> : KtPlugin
 
         val testDir = "${project.buildDir}/test-js/${target.name}"
 
+        val engineName = target.engine.npmModules.first().capitalize()
+
+        var needed by Delegates.notNull<Boolean>()
+
+        val checkSources = project.task<Task>("${target.name}TestCheckSources") {
+            dependsOn(target.testCompileTask)
+            doLast {
+                needed = project.file(target.testCompileTask.outputFile).exists()
+            }
+        }
+
         val copyModules = project.task<Copy>("${target.name}TestCopyModules") {
+            dependsOn(checkSources)
+            onlyIf { needed }
             group = "build"
             into("$testDir/node_modules")
         }
 
         val prepareModules = project.task<Task>("${target.name}TestPrepareModules") {
+            dependsOn(checkSources)
+            onlyIf { needed }
             group = "build"
             dependsOn(target.testCompileTask)
             doLast {
@@ -89,30 +103,24 @@ abstract class KotlinJsTestsNodePlugin<E: KotlinJsTestsNodeExtension> : KtPlugin
 
         copyModules.dependsOn(prepareModules)
 
-        val engineName = target.engine.npmModules.first().capitalize()
-
         val installRunner = project.task<NpmTask>("${target.name}TestInstall$engineName") {
+            dependsOn(checkSources)
+            onlyIf { needed }
             group = "node"
             setArgs(listOf("install") + target.engine.npmModules)
             setWorkingDir(project.file(testDir))
         }
 
         val runTests = project.task<NodeTask>("${target.name}TestRun$engineName") {
+            dependsOn(checkSources)
+            onlyIf { needed }
             group = "verification"
             setWorkingDir(project.file(testDir))
             setScript(project.file("$testDir/node_modules/${target.engine.executable}"))
             setArgs(target.engine.firstArguments + listOf("node_modules/" + project.file(target.testCompileTask.outputFile).name))
         }
 
-        val checkSources = project.task<Task>("${target.name}TestCheckSources") {
-            dependsOn(target.testCompileTask)
-            doLast {
-                if (project.file(target.testCompileTask.outputFile).exists().not())
-                    listOf(copyModules, installRunner, runTests, project.tasks["nodeSetup"] as AbstractTask).forEach { it.isEnabled = false }
-            }
-        }
-
-        runTests.dependsOn(checkSources, copyModules, installRunner)
+        runTests.dependsOn(copyModules, installRunner)
 
         val testTask = project.tasks.findByName("${target.name}Test") ?: project.tasks.getByName("test")
         testTask.dependsOn(runTests)
