@@ -51,7 +51,7 @@ abstract class KotlinJsTestsNodePlugin<E: KotlinJsTestsNodeExtension> : KtPlugin
 
         target.testCompileTask.kotlinOptions.moduleKind = "commonjs"
 
-        val testDir = "${project.buildDir}/test-js/${target.name}"
+        val testDir = target.outputDir
 
         val engineName = target.engine.npmModules.first().capitalize()
 
