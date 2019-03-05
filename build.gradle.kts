@@ -4,11 +4,11 @@ plugins {
     id("kotlin-platform-jvm")
     `kotlin-dsl`
     id("maven-publish")
-    id("com.jfrog.bintray") version "1.8.0"
+    id("com.jfrog.bintray") version "1.8.4"
 }
 
 group = "com.github.salomonbrys.gradle.kotlin.js"
-version = "1.1.0"
+version = "1.2.0"
 
 repositories {
     jcenter()
@@ -17,7 +17,7 @@ repositories {
     maven(url = "https://dl.bintray.com/kotlin/kotlin-eap")
 }
 
-val kotlinVersion = "1.3.20"
+val kotlinVersion = "1.3.21"
 
 dependencies {
     implementation(gradleApi())
@@ -29,7 +29,7 @@ dependencies {
 
 val sourcesJar = task<Jar>("sourcesJar") {
     classifier = "sources"
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
 }
 
 afterEvaluate {

@@ -1,7 +1,6 @@
 package com.github.salomonbrys.gradle.kotlin.js.jstests.node
 
 import com.github.salomonbrys.gradle.kotlin.js.KtPlugin
-import com.github.salomonbrys.gradle.kotlin.js.jscompiletasks.KotlinJsCompileTasksPlugin
 import com.moowork.gradle.node.NodeExtension
 import com.moowork.gradle.node.npm.NpmTask
 import com.moowork.gradle.node.task.NodeTask
@@ -15,8 +14,6 @@ import kotlin.reflect.KClass
 
 abstract class KotlinJsTestsNodePlugin<E: KotlinJsTestsNodeExtension> : KtPlugin<Project> {
 
-    protected abstract val tasksPlugin: KClass<out KotlinJsCompileTasksPlugin>
-
     protected abstract val extensionClass: KClass<E>
 
     protected abstract fun listTargets(ext: E): Iterable<KotlinJsTestsNodeTarget>
@@ -25,7 +22,6 @@ abstract class KotlinJsTestsNodePlugin<E: KotlinJsTestsNodeExtension> : KtPlugin
     final override fun Project.applyPlugin() {
         apply {
             plugin("com.moowork.node")
-            plugin(tasksPlugin.java)
         }
 
         val ext = extensions.create("kotlinJsNodeTests", extensionClass.java, this)

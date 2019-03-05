@@ -6,7 +6,6 @@ Collection of Gradle plugins to ease the use & test of Kotlin/JS code.
 
 - The **js-tests.node** plugin enables you to run Kotin/JS tests with NodeJS.
 - The **assemble-web** plugin enables you to copy compiled Kotlin/JS and dependencies JS files to a web directory.
-- The **js-compile-tasks** plugin enables you to easily access compile tasks in Kotlin DSL.
 
 ## Install
 
@@ -22,7 +21,7 @@ buildscript {
         maven { url "https://dl.bintray.com/salomonbrys/gradle-plugins" }
     }
     dependencies {
-        classpath "com.github.salomonbrys.gradle.kotlin.js:kotlin-js-gradle-utils:1.1.0"
+        classpath "com.github.salomonbrys.gradle.kotlin.js:kotlin-js-gradle-utils:1.2.0"
     }
 }
 ```
@@ -43,7 +42,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id.startsWith("com.github.salomonbrys.gradle.kotlin.js.")) {
-                useModule("com.github.salomonbrys.gradle.kotlin.js:kotlin-js-gradle-utils:1.1.0")
+                useModule("com.github.salomonbrys.gradle.kotlin.js:kotlin-js-gradle-utils:1.2.0")
             }
         }
     }
@@ -86,10 +85,8 @@ The JS target containing code must be compiled either as "umd" or "commonjs" mod
 
 ```groovy
 kotlin {
-    targets {
-        fromPreset(presets.js, 'js') {
-            tasks[compilations.main.compileKotlinTaskName].kotlinOptions.moduleKind = "umd"
-        }
+    js {
+        compilations.main.compileKotlinTask.kotlinOptions.moduleKind = "umd"
     }
 }
 ```
@@ -98,12 +95,8 @@ kotlin {
 
 ```kotlin
 kotlin {
-    targets {
-        add(presets["js"].createTarget("js").apply {
-            kotlinJsCompileTasks {
-                main.kotlinOptions.moduleKind = "umd"
-            }
-        })
+    js {
+        compilations["main"].compileKotlinTask.kotlinOptions.moduleKind = "umd"
     }
 }
 ```
@@ -120,12 +113,13 @@ kotlinJsNodeTests {
 }
 ```
 
-You can configure which engine is used (Mocha by default):
+You can configure which engine is used (Mocha by default) and/or the test files location:
 
 ```groovy
 kotlinJsNodeTests {
     js {
         engine = qUnit
+        outputDir = "$buildDir/test-js/$name"
     }
 }
 ```
@@ -139,26 +133,23 @@ For the plugin to create the test tasks for your target, use the `kotlinJsNodeTe
 
 ```kotlin
 kotlin {
-    targets {
-        add(presets["js"].createTarget("js").apply {
-            kotlinJsNodeTests { thisTarget() }
-        })
+    js {
+        kotlinJsNodeTests { thisTarget() }
     }
 }
 ```
 
-You can configure which engine is used (Mocha by default):
+You can configure which engine is used (Mocha by default) and/or the test files location:
 
 ```kotlin
 kotlin {
-    targets {
-        add(presets["js"].createTarget("js").apply {
-            kotlinJsNodeTests {
-                thisTarget {
-                    engine = mocha
-                }
+    js {
+        kotlinJsNodeTests {
+            thisTarget {
+                engine = mocha
+                outputDir = "$buildDir/test-js/$name"
             }
-        })
+        }
     }
 }
 ```
@@ -180,6 +171,7 @@ kotlinJsNodeTests {
     targets {
         create("js") {
             engine = mocha
+            outputDir = "$buildDir/test-js/$name"
         }
     }
 }
@@ -216,7 +208,8 @@ compileKotlin2Js.kotlinOptions.moduleKind = "umd"
 ##### Gradle Kotlin DSL
 
 ```kotlin
-kotlinJsCompileTasks.compileKotlin2Js.kotlinOptions.moduleKind = "umd"
+val compileKotlin2Js: org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile by tasks
+compileKotlin2Js.kotlinOptions.moduleKind = "umd"
 ```
 
 #### Use
@@ -285,10 +278,8 @@ For the plugin to create the sync tasks for your target, use the `assembleWeb` e
 
 ```kotlin
 kotlin {
-    targets {
-        add(presets["js"].createTarget("js").apply {
-            assembleWeb { thisTarget() }
-        })
+    js {
+        assembleWeb { thisTarget() }
     }
 }
 ```
@@ -297,14 +288,12 @@ You can configure the output directory (default is `"$buildDir/web/${target.name
 
 ```kotlin
 kotlin {
-    targets {
-        add(presets["js"].createTarget("js").apply {
-            assembleWeb {
-                thisTarget {
-                    outputDir = "$projectDir/web/KotlinJS"
-                }
+    js {
+        assembleWeb {
+            thisTarget {
+                outputDir = "$projectDir/web/KotlinJS"
             }
-        })
+        }
     }
 }
 ```
@@ -358,66 +347,4 @@ The API is the same for Gradle Groovy and Kotlin DSLs:
 assembleWeb {
     outputDir = "$buildDir/webapp/js"
 }
-```
-
-
-## Kotlin/JS compile tasks
-
-This plugin enables you to easily access Kotlin/JS compile tasks to configure it **in Gradle Kotlin DSL**.
-This plugin provides nothing interesting when using Gradle Groovy DSL.
-**It is enabled by all other plugins of this project**, so you don't have to manually install it if you are using any of them.
-
-### In multiplatform modules
-
-#### Install
-
-```kotlin
-plugins {
-    id("com.github.salomonbrys.gradle.kotlin.js.mpp-compile-tasks")
-}
-```
-
-#### Use
-
-To access the Kotlin/JS compile task for your target, use the `kotlinJsCompileTasks` extension with Kotlin extension functions:
-
-```kotlin
-kotlin {
-    targets {
-        add(presets["js"].createTarget("js").apply {
-            kotlinJsCompileTasks {
-                main.kotlinOptions.moduleKind = "umd"
-                test.kotlinOptions.moduleKind = "commonjs"
-            }
-        })
-    }
-}
-```
-
-You can also use the top-level API (without Kotlin extension functions):
-
-```kotlin
-kotlinJsCompileTasks.of("js").main.kotlinOptions.moduleKind = "umd"
-kotlinJsCompileTasks.of("js").test.kotlinOptions.moduleKind = "commonjs"
-```
-
-### In JS-only modules
-
-#### Install
-
-```kotlin
-// build.gradle.kts
-
-plugins {
-    id("com.github.salomonbrys.gradle.kotlin.js.platform-compile-tasks")
-}
-```
-
-#### Use
-
-To access the Kotlin/JS compile task, use the `kotlinJsCompileTasks` extension:
-
-```kotlin
-kotlinJsCompileTasks.compileKotlin2Js.kotlinOptions.moduleKind = "umd"
-kotlinJsCompileTasks.compileTestKotlin2Js.kotlinOptions.moduleKind = "commonjs"
 ```
