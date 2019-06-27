@@ -1,6 +1,12 @@
+THIS PLUGIN IS DEPRECATED
+=========================
+
+It has been superseeded by the Kotlin 1.3.40 gradle plugins, and is therefore not needed anymore.
+
+
 
 Kotlin/JS gradle utilities
-==========================
+--------------------------
 
 Collection of Gradle plugins to ease the use & test of Kotlin/JS code.
 
